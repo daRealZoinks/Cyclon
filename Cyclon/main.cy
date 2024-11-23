@@ -1,0 +1,1 @@
+automatic x = 45 + ( foo * bar ) ;

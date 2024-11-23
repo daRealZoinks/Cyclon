@@ -1,12 +1,35 @@
-﻿// Cyclon.cpp : Defines the entry point for the application.
-//
+﻿#include <string>
+#include <iostream>
+#include <fstream>
+#include <iosfwd>
+#include <vector>
 
-#include "Cyclon.h"
+#include "Token.h"
+#include "Lexer.h"
 
-using namespace std;
+std::string readFromFile(std::string fileName)
+{
+	std::string text;
+
+	std::ifstream inputFileStream(fileName);
+
+	getline(inputFileStream, text);
+
+	inputFileStream.close();
+
+	return text;
+}
 
 int main()
 {
-	cout << "Hello CMake." << endl;
+	std::string sourceCode = readFromFile("main.cy");
+
+	std::vector<Token> tokens = tokenize(sourceCode);
+
+	for (auto &token : tokens)
+	{
+		std::cout << token.tokenType << std::endl;
+	}
+
 	return 0;
 }

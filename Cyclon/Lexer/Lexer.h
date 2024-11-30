@@ -6,12 +6,11 @@
 #include <iosfwd>
 #include <iostream>
 #include <map>
-
+#include <cstdlib>
 #include "TokenType.h"
 #include "IsNumber.h"
 #include "IsAlphabetical.h"
 #include "IsSkippable.h"
-#include <cstdlib>
 #include "Token.h"
 
 typedef std::map<std::string, TokenType> ReservedIdentifierMap;

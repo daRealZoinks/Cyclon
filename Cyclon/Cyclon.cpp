@@ -4,8 +4,8 @@
 #include <iosfwd>
 #include <vector>
 
-#include "Token.h"
-#include "Lexer.h"
+#include "Lexer/Token.h"
+#include "Lexer/Lexer.h"
 
 std::string readFromFile(std::string fileName)
 {

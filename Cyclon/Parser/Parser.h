@@ -2,62 +2,96 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <cstdlib>
 
-enum NodeType
+#include "AbstractSyntaxTreeTypes/ExpressionNode.h"
+#include "AbstractSyntaxTreeTypes/IdentifierNode.h"
+#include "AbstractSyntaxTreeTypes/NumericLiteralNode.h"
+#include "AbstractSyntaxTreeTypes/ProgramNode.h"
+#include "AbstractSyntaxTreeTypes/StatementNode.h"
+#include "../Lexer/Lexer.h"
+#include "../Lexer/Token.h"
+#include "../Lexer/TokenType.h"
+
+class Parser
 {
-	program,
-	numberLiteral,
-	identifier,
-	binaryExpression,
-};
-
-struct Statement
-{
-	NodeType nodeType;
-};
-
-struct Program : public Statement
-{
-	std::vector<Statement> body;
-
-	Program()
+public:
+	ProgramNode ProduceAbstractSyntaxTree(std::string sourceCode)
 	{
-		nodeType = NodeType::program;	
+		ProgramNode programNode;
+
+		tokens = tokenize(sourceCode);
+
+		programNode.bodyArraySize = tokens.size();
+		int k = 0;
+		programNode.bodyArray = new StatementNode * [programNode.bodyArraySize];
+
+		for (size_t i = 0; i < programNode.bodyArraySize; i++)
+		{
+			Token token = tokens[i];
+			programNode.bodyArray[k++] = parseStatement(token);
+		}
+
+		return programNode;
 	}
-};
 
-struct Expression : public Statement
-{
-};
-
-struct BinaryExpression : public Expression
-{
-	Expression left;
-	Expression right;
-	std::string operatorValue;
-
-	BinaryExpression()
+private:
+	StatementNode* parseStatement(Token token)
 	{
-		nodeType = NodeType::binaryExpression;
+		return	parseExpression(token);
 	}
-};
 
-struct Identifier : public Expression
-{
-	std::string symbol;
-
-	Identifier()
+	ExpressionNode* parseExpression(Token token)
 	{
-		nodeType = NodeType::identifier;
+		return	parsePrimaryExpression(token);
 	}
-};
 
-struct NumberLiteral : public Expression
-{
-	int value;
-
-	NumberLiteral()
+	ExpressionNode* parsePrimaryExpression(Token token)
 	{
-		nodeType = NodeType::numberLiteral;
+		TokenType tokenType = token.tokenType;
+
+		switch (tokenType)
+		{
+			case TokenType::number:
+			{
+				NumericLiteralNode* numericLiteralNode = new NumericLiteralNode();
+				numericLiteralNode->value = std::stoi(token.value);
+
+				return numericLiteralNode;
+				break;
+			}
+			case TokenType::identifier:
+			{
+				IdentifierNode* identifierNode = new IdentifierNode();
+				identifierNode->symbol = token.value;
+
+				return identifierNode;
+				break;
+			}
+			case TokenType::equals:
+				break;
+			case TokenType::openParenthesis:
+				break;
+			case TokenType::closedParenthesis:
+				break;
+			case TokenType::binaryOperator:
+				break;
+			case TokenType::automatic:
+				break;
+			case TokenType::endOfStatement:
+				break;
+			default:
+				std::cout << "Unexpected token found during parsing: "<< token.value << std::endl;
+				exit(1);
+				StatementNode* statementNode = new StatementNode();
+					
+
+				return (ExpressionNode*)statementNode;
+				break;
+		}
 	}
+
+private:
+	std::vector<Token> tokens;
 };
